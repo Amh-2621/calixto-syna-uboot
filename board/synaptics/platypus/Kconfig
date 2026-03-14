@@ -1,0 +1,9 @@
+if TARGET_PLATYPUS
+
+config SYS_BOARD
+	default "platypus"
+
+config SYS_CONFIG_NAME
+	default "platypus"
+
+endif

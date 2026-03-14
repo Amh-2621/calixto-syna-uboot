@@ -1,0 +1,147 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or
+ * later as published by the Free Software Foundation.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
+ * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
+ * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
+ * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
+ * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
+ * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
+ * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
+ * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
+ */
+
+/dts-v1/;
+
+#include "platypus.dtsi"
+#include "include/dt-bindings/gpio/gpio.h"
+
+/ {
+	model = "Synaptics Platypus RDK USB U-BOOT";
+	compatible = "Synaptics,platypus", "Synaptics,asserial";
+
+	memory {
+		device_type = "memory";
+		reg = <0 0 0 0x80000000>;
+	};
+
+	chosen {
+		stdout-path = &usbc0;
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		sdio_vmmc: sdio_vmmc {
+			compatible = "regulator-fixed";
+			pinctrl-0 = <&sdio_vmmc_pmux>;
+			pinctrl-names = "default";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "vmmc_sdio";
+			enable-active-high;
+			gpio = <&portb 16 GPIO_ACTIVE_HIGH>;
+		};
+
+		sdio_vqmmc: sdio_vqmmc {
+			compatible = "regulator-gpio";
+			pinctrl-0 = <&sdio_vqmmc_pmux>;
+			pinctrl-names = "default";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "vqmmc_sdio";
+			regulator-type = "voltage";
+			states = <1800000 0x0 3300000 0x1>;
+			gpios = <&porta 17 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&pinctrl {
+	sdio_pmux: sdio_pmux{
+		groups = "SDIO0_CDn";
+		function = "sdio";
+	};
+
+	sdio_vmmc_pmux: sdio_vmmc_pmux{
+		groups = "SDIO0_WP";
+		function = "gpio";
+	};
+
+	sdio_vqmmc_pmux: sdio_vqmmc_pmux{
+		groups = "I2S1_DO1";
+		function = "gpio";
+	};
+};
+
+&usbc0 {
+	status = "okay";
+};
+
+&smuart0 {
+	status = "okay";
+};
+
+&spi0 {
+	status = "okay";
+	max-write-size = <128>;
+	clock-frequency = <200000000>;
+	spi-flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		memory-map = <0x0 0xf0000000 0x0 0x4000000>;
+		spi-max-frequency = <10000000>;
+	};
+};
+
+&mdio0 {
+	phy0: ethernet-phy@0 {
+		reg = <0>;
+	};
+};
+
+&gmac0 {
+	status = "okay";
+	max-speed = <100>;
+	phy-mode = "mii";
+	phy-handle = <&phy0>;
+	phy = <&phy0>;
+};
+
+&sdhci0 {
+	status = "okay";
+	mmc-ddr-1_8v;
+	mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	fixed-voltage;
+};
+
+&sdhci1 {
+	status="okay";
+	pinctrl-0 = <&sdio_pmux>;
+	pinctrl-names = "default";
+	sdhci-sdio;
+	cap-sd-highspeed;
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	fixed-voltage;
+	vmmc-supply = <&sdio_vmmc>;
+	vqmmc-supply = <&sdio_vqmmc>;
+};

@@ -1,0 +1,10 @@
+config SYNA_OPTEE
+	bool "Synaptics SoC TEE driver"
+	depends on OPTEE
+	default y
+
+config SYNA_TA
+	bool "Synaptics TA supported in U-Boot"
+	depends on SYNA_OPTEE
+	default y
+
