@@ -1,0 +1,6 @@
+config MMC_DWCMSHC
+	bool "DesignWare Cores Mobile Storage Host Controller"
+	depends on DM_MMC && BLK
+	depends on MMC_SDHCI
+	help
+	  Support for DesignWare Cores Mobile Storage Host Controller on Synaptics SOCs

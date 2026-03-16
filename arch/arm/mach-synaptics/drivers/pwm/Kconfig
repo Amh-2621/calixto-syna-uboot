@@ -1,0 +1,6 @@
+config SYNA_PWM
+	bool "Enable support for Synaptics PWM"
+	depends on ARCH_SYNAPTICS
+	depends on DM_PWM
+	help
+	  This enables PWM framework driver for Synaptics SoCs.

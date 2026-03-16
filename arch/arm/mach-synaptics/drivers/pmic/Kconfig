@@ -1,0 +1,14 @@
+config SYNA_MYNA2_PMIC
+	bool "Synaptics Myna2 SoC pmic driver"
+	depends on SYNA_SUBOOT && TARGET_MYNA2
+	default y
+
+config SYNA_PLATYPUS_PMIC
+	bool "Synaptics Platypus SoC pmic driver"
+	depends on SYNA_SUBOOT && TARGET_PLATYPUS
+	default y
+
+config SYNA_DOLPHIN_PMIC
+	bool "Synaptics Dolphin SoC pmic driver"
+	depends on SYNA_SUBOOT && TARGET_DOLPHIN
+	default y

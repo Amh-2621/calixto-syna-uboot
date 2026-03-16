@@ -1,0 +1,22 @@
+if TARGET_MYNA2
+
+config SYS_BOARD
+	default "myna2"
+
+config SYS_CONFIG_NAME
+	default "myna2"
+
+config SYS_BOARD_FPGA
+	bool "Run on FPGA board"
+	default n
+	help
+	  Say Y here to support FPGA.
+
+config SYS_BOARD_VELOCE
+	bool "Run on VELOCE board"
+	default n
+	select SYS_BOARD_FPGA
+	help
+	  Say Y here to support VELOCE.
+
+endif

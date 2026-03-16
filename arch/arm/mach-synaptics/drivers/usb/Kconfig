@@ -1,0 +1,12 @@
+config SYNA_USB_PHY
+	bool "Synaptics usb PHY driver"
+	depends on ARCH_SYNAPTICS
+	default n
+	help
+	  Support usb3.0 PHY driver for Synaptics
+
+config SYNA_USB_DWC3
+	bool "Synaptics Platforms USB DWC3 glue layer"
+	depends on ARCH_SYNAPTICS && USB_XHCI_DWC3
+	help
+	  Support XHCI driver for Synaptics.
