@@ -1,0 +1,97 @@
+if ARCH_CALIXTO
+
+config SYS_SOC
+	default "calixto"
+
+config SYS_VENDOR
+	default "calixto"
+
+choice
+	prompt "Synaptics board select"
+
+config TARGET_SL1680_OPTIMA
+	bool "Synaptics SL1680-OPTIMA SoC"
+	select ARM64
+	help
+	  The Synaptics SL1680-OPTIMA is a ARM64-based SoC with a quad-core Cortex-A73.
+	  including UART, SPI, USB2.0 and OTG, NAND, EMMC, USB Ethernet, etc.
+
+config TARGET_PLATYPUS
+	bool "Synaptics Platypus SoC"
+	select ARM64
+	help
+	  The Synaptics AS640 is a ARM64-based SoC with a quad-core Cortex-A55.
+	  including UART, SPI, USB2.0 and OTG, EMMC, etc.
+
+config TARGET_MYNA2
+	bool "Synaptics Myna2 SoC"
+	select ARM64
+	help
+	  The Synaptics Myna2 is a ARM64-based SoC with a quad-core Cortex-A55.
+	  including UART, SPI, USB2.0 and OTG, EMMC, etc.
+endchoice
+
+source "arch/arm/mach-calixto/drivers/Kconfig"
+source "arch/arm/mach-calixto/cmd/Kconfig"
+
+source "board/synaptics/myna2/Kconfig"
+source "board/synaptics/platypus/Kconfig"
+source "board/calixto/sl1680-optima/Kconfig"
+
+menu "Synaptics Specific Setup"
+
+choice
+	prompt "Select fastboot/spi-uboot/usb-uboot"
+config SYNA_USB_UBOOT
+	bool "Synaptics USB U-Boot support"
+	help
+	  Enable boot from USB tool including download, burn image through USB
+
+config SYNA_SPI_UBOOT
+	bool "synaptics SPI U-Boot support"
+	help
+	  Support Synaptics fastboot
+
+config SYNA_SUBOOT
+	bool "synaptics SUBOOT support"
+	help
+	  Support Synaptics SUBOOT solution
+
+endchoice
+
+choice
+	depends on SYNA_SUBOOT
+	prompt "Select emmc/spi/usb"
+
+config SYNA_MMC_SUBOOT
+	bool "Synaptics MMC SU-Boot support"
+	help
+	  Enable boot Linux from eMMC/SD
+
+config SYNA_SPI_SUBOOT
+	bool "synaptics SPI SU-Boot support"
+	help
+	  Enable boot Linux from SPI NOR
+
+config SYNA_USB_SUBOOT
+	bool "synaptics USB SU-Boot support"
+	help
+	  Enable boot Linux from USB tool
+
+endchoice
+
+config USE_IRQ_SYNA
+	bool "Support IRQ function of Synaptics' chip"
+
+config SYNA_RESCUE_MODE
+    bool "Enable Rescue Mode"
+    depends on ARCH_SYNAPTICS
+    help
+      Rescue Mode provides a minimal, standalone Linux environment
+      (initramfs-based) for system recovery when the main OS is
+      unbootable or corrupted. It runs entirely in RAM from a
+      separate partition and operates independently of the main
+      root filesystem.
+endmenu
+
+endif

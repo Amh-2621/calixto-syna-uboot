@@ -1,0 +1,37 @@
+config VIDEO_SYNA
+	bool "Enable Syna Display support"
+	depends on ARCH_SYNAPTICS
+	depends on DM_VIDEO
+	help
+		This enables support for Synaptics display for Edge Soc family
+
+config PANEL_CFG
+	string "Panel Config file"
+	depends on VIDEO_SYNA
+	help
+		Configures the panel information from Header file provided.
+
+config SYNA_DRM_BRIDGE_LT9611
+	bool "Syna driver based LT9611 bridge"
+	select VIDEO_BRIDGE
+	depends on VIDEO_SYNA
+	help
+		Configures Syna driver based LT9611 bridge support
+
+config SYNA_WSPANEL_1080P
+	bool "syna compatible wspanel 1080p resolution"
+	depends on VIDEO_SYNA
+	help
+	  syna compatible waveshare 13.3 inch 1080P panel
+
+config DEFAULT_PANEL_DTBO
+	string "Panel default dtbo file"
+	depends on VIDEO_SYNA
+	help
+		Configures the default panel dtbo to be applied.
+
+config PANEL_DTBO_PATH
+	string "Rootfs path to dtbo file"
+	depends on VIDEO_SYNA
+	help
+		Configures the rootfs path to find panel dtbo.

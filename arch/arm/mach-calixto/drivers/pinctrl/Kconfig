@@ -1,0 +1,3 @@
+config SYNA_PINCTRL
+	bool "Synaptics SoC pinctrl driver"
+	default y

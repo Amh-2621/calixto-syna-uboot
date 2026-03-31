@@ -1,0 +1,73 @@
+/* SPDX-License-Identifier: GPL-2.0+ */
+/*
+ * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or
+ * later as published by the Free Software Foundation.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
+ * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
+ * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
+ * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
+ * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
+ * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
+ * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
+ * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
+ */
+
+#ifndef _TEE_CMD_H_
+#define _TEE_CMD_H_
+
+#include "smc.h"
+
+enum TAMgrCmd {
+	TAMGR_CMD_SUSPEND,
+	TAMGR_CMD_RESUME,
+	TAMGR_CMD_REGISTER,
+	/* Create Instance
+	 * input: destination UUID
+	 * output: created taskId
+	 */
+	TAMGR_CMD_CREATE_INSTANCE,
+	/* Destroy Instance
+	 * input: taskId to destroy in params[0].value.a
+	 * note: should NOT need call it explicitly
+	 */
+	TAMGR_CMD_DESTROY_INSTANCE,
+	TAMGR_CMD_MAX
+};
+
+enum tz_boot_func_id {
+	/* param: {stage, mode};
+	 * return: error code */
+	SMC_FUNC_TOS_BOOT_STAGE			= TOS_BOOT(0x10),
+	/* param: {attr_mask, attr_val, region, max_num};
+	 * return: count */
+	SMC_FUNC_TOS_MEM_REGION_LIST		= TOS_BOOT(0x21),
+	/* param: {src, src_len, dst, dst_len};
+	 * return: {errcode,dec_len} */
+	SMC_FUNC_TOS_CRYPTO_VERIFY_IMAGE	= TOS_BOOT(0x40),
+};
+
+enum tz_boot_stage {
+	TZ_BOOT_STAGE_ROMCODE,
+	TZ_BOOT_STAGE_SYSINIT,
+	TZ_BOOT_STAGE_TRUSTZONE,
+	TZ_BOOT_STAGE_BOOTLOADER,
+	TZ_BOOT_STAGE_LINUX,
+	TZ_BOOT_STAGE_ANDROID
+};
+
+enum tz_boot_mode {
+	TZ_BOOT_MODE_NORMAL,
+	TZ_BOOT_MODE_RECOVERY
+};
+
+#endif /* _TEE_CMD_H_ */

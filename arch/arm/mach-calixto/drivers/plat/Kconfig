@@ -1,0 +1,22 @@
+config SYNA_BM
+	bool "Enable BM call"
+	depends on CMD_SYNA_USBLOAD
+	default y
+
+config SYNA_TZ_MR
+        bool "Use memory layout from TZ"
+        depends on SYNA_SUBOOT
+
+config SYNA_TEE
+	bool "Enable Synaptics TEE APIs"
+	depends on SYNA_SUBOOT
+	default y
+
+config SYNA_SM
+	bool "Support System Manager Start in U-Boot"
+	depends on SYNA_SUBOOT
+
+config SYNA_INCLUDE_SM_FW
+	bool "Build System Manager firmware into U-Boot"
+	depends on SYNA_SM
+
