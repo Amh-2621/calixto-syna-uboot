@@ -1,4 +1,0 @@
-config USBCONSOLE
-	bool "Synaptics usb console"
-	help
-	  Use synaptics usb console
