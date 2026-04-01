@@ -1757,7 +1757,6 @@ source "arch/arm/mach-imx/Kconfig"
 
 source "arch/arm/mach-synaptics/Kconfig"
 
-source "arch/arm/mach-calixto/Kconfig"
 
 source "board/bosch/shc/Kconfig"
 source "board/bosch/guardian/Kconfig"
