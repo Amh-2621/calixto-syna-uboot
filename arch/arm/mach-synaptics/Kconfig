@@ -33,6 +33,7 @@ config TARGET_MYNA2
 config TARGET_SL1680_OPTIMA
 	bool "Synaptics SL1680-OPTIMA SoC"
 	select ARM64
+	select TARGET_DOLPHIN
 	help
 	  The Synaptics SL1680-OPTIMA is a ARM64-based SoC with a quad-core Cortex-A73.
 	  including UART, SPI, USB2.0 and OTG, NAND, EMMC, USB Ethernet, etc.
