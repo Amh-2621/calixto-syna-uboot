@@ -45,7 +45,7 @@ source "arch/arm/mach-synaptics/cmd/Kconfig"
 source "board/synaptics/myna2/Kconfig"
 source "board/synaptics/platypus/Kconfig"
 source "board/synaptics/dolphin/Kconfig"
-source "board/calixto/sl1680-optima/Kconfig"
+source "board/synaptics/sl1680-optima/Kconfig"
 
 menu "Synaptics Specific Setup"
 
