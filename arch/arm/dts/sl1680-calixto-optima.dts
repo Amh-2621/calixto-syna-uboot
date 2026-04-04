@@ -28,7 +28,7 @@
 #include "include/dt-bindings/gpio/gpio.h"
 
 / {
-	model = "Synaptics Dolphin RDK";
+	model = "Calixto SL1680 OPTIMA 2GB";
 	compatible = "Synaptics,dolphin", "Synaptics,asserial";
 
 	memory {
@@ -46,14 +46,10 @@
 		#size-cells = <0>;
 
 		sdio_vmmc: sdio_vmmc {
-			pinctrl-0 = <&sdio_vmmc_pmux>;
-			pinctrl-names = "default";
 			compatible = "regulator-fixed";
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			regulator-name = "vmmc_sdio";
-			enable-active-high;
-			gpio = <&portb 12 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
@@ -62,12 +58,6 @@
 			compatible = "linaro,optee-tz";
 			method = "smc";
 		};
-	};
-
-	panel0-backlight {
-		compatible = "gpio-backlight";
-		gpios = <&expander0 1 GPIO_ACTIVE_HIGH>;
-		status = "okay";
 	};
 };
 
@@ -94,19 +84,9 @@
 		function = "sdio";
 	};
 
-	sdio_vmmc_pmux: sdio_vmmc_pmux{
-		groups = "SDIO_WP";
-		function = "gpio";
-	};
-
 	i2c0_pmux: i2c0-pmux {
 		groups = "TW0_SCL", "TW0_SDA";
 		function = "tw0";
-	};
-
-	hdmitx5v_pmux: hdmitx5v-pmux {
-		groups = "USB2_DRV_VBUS";
-		function = "gpio";
 	};
 };
 
@@ -133,7 +113,7 @@
 };
 
 &phy0 {
-	reg = <0>;
+	reg = <3>;
 };
 
 &i2c0 {
@@ -222,10 +202,6 @@
 	disp-mode = <2>;
 	disp1-res-id = <13>;
 	disp2-res-id = <102>;
-
-	pinctrl-0 = <&hdmitx5v_pmux>;
-	pinctrl-names = "default";
-	hdtx5v-gpio = <&portb 23 GPIO_ACTIVE_HIGH>;
 
 	dsi_panel {
 		status= "okay";

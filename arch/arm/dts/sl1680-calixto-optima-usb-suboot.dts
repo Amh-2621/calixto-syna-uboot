@@ -28,8 +28,8 @@
 #include "include/dt-bindings/gpio/gpio.h"
 
 / {
-        model = "Synaptics Dolphin RDK";
-        compatible = "Synaptics,dolphin", "Synaptics,asserial";
+	model = "Calixto SL1680 OPTIMA 2GB";
+	compatible = "Synaptics,dolphin", "Synaptics,asserial";
 
         memory {
                 device_type = "memory";
@@ -46,14 +46,10 @@
                 #size-cells = <0>;
 
                 sdio_vmmc: sdio_vmmc {
-                        pinctrl-0 = <&sdio_vmmc_pmux>;
-                        pinctrl-names = "default";
                         compatible = "regulator-fixed";
                         regulator-min-microvolt = <3300000>;
                         regulator-max-microvolt = <3300000>;
                         regulator-name = "vmmc_sdio";
-                        enable-active-high;
-                        gpio = <&portb 12 GPIO_ACTIVE_HIGH>;
                 };
         };
 };
@@ -115,7 +111,7 @@
 };
 
 &phy0 {
-        reg = <0>;
+        reg = <3>;
 };
 
 &i2c0 {
