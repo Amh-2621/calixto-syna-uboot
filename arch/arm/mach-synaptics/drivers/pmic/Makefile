@@ -25,4 +25,4 @@
 obj-$(CONFIG_SYNA_MYNA2_PMIC) += myna2_pmic.o
 obj-$(CONFIG_SYNA_PLATYPUS_PMIC) += platypus_pmic.o
 obj-$(CONFIG_SYNA_DOLPHIN_PMIC) += dolphin_pmic.o
-obj-$(SYNA_SL1680_OPTIMA_PMIC) += sl1680-optima_pmic.o
+obj-$(CONFIG_SYNA_SL1680_OPTIMA_PMIC) += sl1680-optima_pmic.o
