@@ -37,7 +37,7 @@
 	};
 
 	chosen {
-		stdout-path = &usbc0;
+		stdout-path = &smuart0;
 	};
 
 	regulators {
@@ -52,12 +52,12 @@
 			regulator-name = "vmmc_sdio";
 		};
 	};
-};
 
-&sysmgr_pinctrl {
-	gmac_reset_pmux: gmac_reset_pmux {
-		groups = "SM_TDO";
-		function = "gpio";
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
 	};
 };
 
@@ -71,7 +71,6 @@
 		groups = "SDIO_CDn";
 		function = "sdio";
 	};
-
 };
 
 &CPU_SLEEP_0 {
@@ -91,7 +90,7 @@
 		#size-cells = <1>;
 		compatible = "jedec,spi-nor";
 		reg = <0>;
-		memory-map = <0x0 0xf0000000 0x0 0x4000000>;
+                memory-map = <0x0 0xf0000000 0x0 0x00800000>;
 		spi-max-frequency = <10000000>;
 	};
 };
@@ -106,11 +105,6 @@
 	phy-mode = "rgmii-id";
 	phy-handle = <&phy0>;
 	phy = <&phy0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&gmac_reset_pmux>;
-	snps,reset-gpio = <&portd 8 GPIO_ACTIVE_HIGH>;
-	snps,reset-active-high;
-	snps,reset-delays-us = <0 10000 50000>;
 };
 
 &sdhci0 {
@@ -136,6 +130,87 @@
 	vmmc-supply = <&sdio_vmmc>;
 };
 
-&usbc0 {
+&usb_phy0 {
 	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&usb_phy1 {
+	status = "okay";
+};
+
+&xhci0 {
+	status = "okay";
+};
+
+&drm {
+	status = "okay";
+
+	disp-mode = <2>;
+	disp1-res-id = <13>;
+	disp2-res-id = <102>;
+
+	dsi_panel {
+		status= "okay";
+
+		NO_OF_RESID =  <1>;
+		DSI_RES =  <102>;
+
+		ACTIVE_WIDTH = <800>;
+		HFP = <70>;
+		HSYNCWIDTH = <20>;
+		HBP = <26>;
+		ACTIVE_HEIGHT = <480>;
+		VFP = <7>;
+		VSYNCWIDTH = <2>;
+		VBP = <21>;
+		TYPE = <1>;
+		SCAN = <0>;
+		FRAME_RATE = <9>;
+		FLAG_3D = <0>;
+		FREQ = <28030>;
+		PTS_PER_4 = <6000>;
+
+		bits_per_pixel = <24>;
+		busformat = <0>;
+
+		VB_MIN = /bits/ 8 <6>;
+		HB_MIN = /bits/ 8 <30>;
+		V_OFF = /bits/ 8 <6>;
+		H_OFF = /bits/ 8 <20>;
+		HB_VOP_OFF = /bits/ 8 <8>;
+		VB_VOP_OFF = /bits/ 8 <3>;
+		HB_BE = /bits/ 8 <7>;
+		VB_BE = /bits/ 8 <2>;
+		VB_FP = /bits/ 8 <2>;
+		HB_FP = /bits/ 8 <10>;
+		PIXEL_CLOCK = <28030>;
+
+		HTOTAL = <916>;
+		Lanes = /bits/ 8 <1>;
+		Vid_mode = /bits/ 8 <2>;
+		virtual_chan = /bits/ 8 <0>;
+		Clk_Lane_Polarity = /bits/ 8 <0>;
+		Data_Lane_Polarity = /bits/ 8 <0>;
+		Recv_ack = /bits/ 8 <0>;
+		Loosely_18 = /bits/ 8 <0>;
+		H_polarity = /bits/ 8 <1>;
+		V_Polarity = /bits/ 8 <1>;
+		Data_Polarity = /bits/ 8 <1>;
+		Eotp_tx = /bits/ 8 <1>;
+		Eotp_rx = /bits/ 8 <0>;
+		non-Continuous_clk = /bits/ 8 <0>;
+		dpi_lp_cmd = /bits/ 8 <1>;
+		Color_coding = /bits/ 8 <5>;
+		Chunks = <0>;
+		Null_Pkt = <0>;
+		Byte_clk = <84090>;
+	};
+
+	hdmi_tx {
+		status= "okay";
+	};
 };

@@ -808,9 +808,15 @@ dtb-$(CONFIG_TARGET_PLATYPUS) += platypus-rdk-usb-suboot.dtb
 dtb-$(CONFIG_TARGET_DOLPHIN) += dolphin-rdk.dtb
 dtb-$(CONFIG_TARGET_DOLPHIN) += dolphin-rdk-usb.dtb
 dtb-$(CONFIG_TARGET_DOLPHIN) += dolphin-rdk-usb-suboot.dtb
-dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima.dtb
-dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb.dtb
-dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima_1GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb_1GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot_1GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima_2GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb_2GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot_2GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima_4GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb_4GB.dtb
+dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot_4GB.dtb
 
 targets += $(dtb-y)
 

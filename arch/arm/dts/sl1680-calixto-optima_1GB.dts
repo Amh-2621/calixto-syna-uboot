@@ -1,0 +1,216 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or
+ * later as published by the Free Software Foundation.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
+ * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
+ * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
+ * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
+ * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
+ * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
+ * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
+ * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
+ */
+
+/dts-v1/;
+
+#include "dolphin.dtsi"
+#include "include/dt-bindings/gpio/gpio.h"
+
+/ {
+	model = "Calixto SL1680 OPTIMA 2GB";
+	compatible = "Synaptics,dolphin", "Synaptics,asserial";
+
+	memory {
+		device_type = "memory";
+		reg = <0 0 0 0x40000000>;
+	};
+
+	chosen {
+		stdout-path = &smuart0;
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		sdio_vmmc: sdio_vmmc {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "vmmc_sdio";
+		};
+	};
+
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
+};
+
+&pinctrl {
+	emmc_pmux: emmc-pmux {
+		groups = "NAND_IO0", "NAND_IO1", "NAND_IO2", "NAND_IO3", "NAND_IO4", "NAND_IO5", "ND_IO6", "NAND_IO7", "NAND_ALE", "NAND_CLE", "NAND_WPn";
+		function = "emmc";
+	};
+
+	sdio_pmux: sdio_pmux{
+		groups = "SDIO_CDn";
+		function = "sdio";
+	};
+};
+
+&CPU_SLEEP_0 {
+	status = "disabled";
+};
+
+&smuart0 {
+	status = "okay";
+};
+
+&spi0 {
+	status = "okay";
+	max-write-size = <128>;
+	clock-frequency = <100000000>;
+	spi-flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+                memory-map = <0x0 0xf0000000 0x0 0x00800000>;
+		spi-max-frequency = <10000000>;
+	};
+};
+
+&phy0 {
+	reg = <3>;
+};
+
+&gmac0 {
+	status = "okay";
+	max-speed = <1000>;
+	phy-mode = "rgmii-id";
+	phy-handle = <&phy0>;
+	phy = <&phy0>;
+};
+
+&sdhci0 {
+	status = "okay";
+	mmc-ddr-1_8v;
+	mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	fixed-voltage;
+};
+
+&sdhci1 {
+	status="okay";
+	pinctrl-0 = <&sdio_pmux>;
+	pinctrl-names = "default";
+	sdhci-sdio;
+	cap-sd-highspeed;
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	pad_sn = <12>;
+	pad_sp = <12>;
+	vmmc-supply = <&sdio_vmmc>;
+};
+
+&usb_phy0 {
+	status = "okay";
+};
+
+&usb0 {
+	status = "okay";
+};
+
+&usb_phy1 {
+	status = "okay";
+};
+
+&xhci0 {
+	status = "okay";
+};
+
+&drm {
+	status = "okay";
+
+	disp-mode = <2>;
+	disp1-res-id = <13>;
+	disp2-res-id = <102>;
+
+	dsi_panel {
+		status= "okay";
+
+		NO_OF_RESID =  <1>;
+		DSI_RES =  <102>;
+
+		ACTIVE_WIDTH = <800>;
+		HFP = <70>;
+		HSYNCWIDTH = <20>;
+		HBP = <26>;
+		ACTIVE_HEIGHT = <480>;
+		VFP = <7>;
+		VSYNCWIDTH = <2>;
+		VBP = <21>;
+		TYPE = <1>;
+		SCAN = <0>;
+		FRAME_RATE = <9>;
+		FLAG_3D = <0>;
+		FREQ = <28030>;
+		PTS_PER_4 = <6000>;
+
+		bits_per_pixel = <24>;
+		busformat = <0>;
+
+		VB_MIN = /bits/ 8 <6>;
+		HB_MIN = /bits/ 8 <30>;
+		V_OFF = /bits/ 8 <6>;
+		H_OFF = /bits/ 8 <20>;
+		HB_VOP_OFF = /bits/ 8 <8>;
+		VB_VOP_OFF = /bits/ 8 <3>;
+		HB_BE = /bits/ 8 <7>;
+		VB_BE = /bits/ 8 <2>;
+		VB_FP = /bits/ 8 <2>;
+		HB_FP = /bits/ 8 <10>;
+		PIXEL_CLOCK = <28030>;
+
+		HTOTAL = <916>;
+		Lanes = /bits/ 8 <1>;
+		Vid_mode = /bits/ 8 <2>;
+		virtual_chan = /bits/ 8 <0>;
+		Clk_Lane_Polarity = /bits/ 8 <0>;
+		Data_Lane_Polarity = /bits/ 8 <0>;
+		Recv_ack = /bits/ 8 <0>;
+		Loosely_18 = /bits/ 8 <0>;
+		H_polarity = /bits/ 8 <1>;
+		V_Polarity = /bits/ 8 <1>;
+		Data_Polarity = /bits/ 8 <1>;
+		Eotp_tx = /bits/ 8 <1>;
+		Eotp_rx = /bits/ 8 <0>;
+		non-Continuous_clk = /bits/ 8 <0>;
+		dpi_lp_cmd = /bits/ 8 <1>;
+		Color_coding = /bits/ 8 <5>;
+		Chunks = <0>;
+		Null_Pkt = <0>;
+		Byte_clk = <84090>;
+	};
+
+	hdmi_tx {
+		status= "okay";
+	};
+};
