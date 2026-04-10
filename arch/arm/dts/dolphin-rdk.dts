@@ -28,7 +28,7 @@
 #include "include/dt-bindings/gpio/gpio.h"
 
 / {
-	model = "Calixto SL1680 OPTIMA 2GB";
+	model = "Synaptics Dolphin RDK";
 	compatible = "Synaptics,dolphin", "Synaptics,asserial";
 
 	memory {
@@ -46,10 +46,14 @@
 		#size-cells = <0>;
 
 		sdio_vmmc: sdio_vmmc {
+			pinctrl-0 = <&sdio_vmmc_pmux>;
+			pinctrl-names = "default";
 			compatible = "regulator-fixed";
 			regulator-min-microvolt = <3300000>;
 			regulator-max-microvolt = <3300000>;
 			regulator-name = "vmmc_sdio";
+			enable-active-high;
+			gpio = <&portb 12 GPIO_ACTIVE_HIGH>;
 		};
 	};
 
@@ -58,6 +62,24 @@
 			compatible = "linaro,optee-tz";
 			method = "smc";
 		};
+	};
+
+	panel0-backlight {
+		compatible = "gpio-backlight";
+		gpios = <&expander0 1 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
+};
+
+&sysmgr_pinctrl {
+	sm_i2c_tw3_pmux: sm_i2c_tw3_pmux {
+		groups = "SM_TW3_SCL", "SM_TW3_SDA";
+		function = "tw3";
+	};
+
+	gmac_reset_pmux: gmac_reset_pmux {
+		groups = "SM_TDO";
+		function = "gpio";
 	};
 };
 
@@ -70,6 +92,21 @@
 	sdio_pmux: sdio_pmux{
 		groups = "SDIO_CDn";
 		function = "sdio";
+	};
+
+	sdio_vmmc_pmux: sdio_vmmc_pmux{
+		groups = "SDIO_WP";
+		function = "gpio";
+	};
+
+	i2c0_pmux: i2c0-pmux {
+		groups = "TW0_SCL", "TW0_SDA";
+		function = "tw0";
+	};
+
+	hdmitx5v_pmux: hdmitx5v-pmux {
+		groups = "USB2_DRV_VBUS";
+		function = "gpio";
 	};
 };
 
@@ -90,13 +127,41 @@
 		#size-cells = <1>;
 		compatible = "jedec,spi-nor";
 		reg = <0>;
-                memory-map = <0x0 0xf0000000 0x0 0x00800000>;
+		memory-map = <0x0 0xf0000000 0x0 0x4000000>;
 		spi-max-frequency = <10000000>;
 	};
 };
 
 &phy0 {
-	reg = <3>;
+	reg = <0>;
+};
+
+&i2c0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pmux>;
+	clock-frequency = <100000>;
+	i2c-sda-hold-time-ns = <449>;
+	i2c-scl-rising-time-ns = <120>;
+	i2c-scl-falling-time-ns = <20>;
+
+};
+
+&i2c3 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&sm_i2c_tw3_pmux>;
+	clock-frequency = <100000>;
+	i2c-sda-hold-time-ns = <449>;
+	i2c-scl-rising-time-ns = <120>;
+	i2c-scl-falling-time-ns = <20>;
+
+	expander0: gpio@43 {
+		compatible = "fcs,fxl6408";
+		reg = <0x43>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
 };
 
 &gmac0 {
@@ -105,6 +170,11 @@
 	phy-mode = "rgmii-id";
 	phy-handle = <&phy0>;
 	phy = <&phy0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&gmac_reset_pmux>;
+	snps,reset-gpio = <&portd 8 GPIO_ACTIVE_HIGH>;
+	snps,reset-active-high;
+	snps,reset-delays-us = <0 10000 50000>;
 };
 
 &sdhci0 {
@@ -152,6 +222,10 @@
 	disp-mode = <2>;
 	disp1-res-id = <13>;
 	disp2-res-id = <102>;
+
+	pinctrl-0 = <&hdmitx5v_pmux>;
+	pinctrl-names = "default";
+	hdtx5v-gpio = <&portb 23 GPIO_ACTIVE_HIGH>;
 
 	dsi_panel {
 		status= "okay";
