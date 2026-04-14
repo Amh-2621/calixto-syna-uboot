@@ -515,5 +515,6 @@ int phy_micrel_ksz90x1_init(void)
 {
 	phy_register(&ksz9021_driver);
 	phy_register(&ksz9031_driver);
+	phy_register(&ksz9131_driver);
 	return 0;
 }
