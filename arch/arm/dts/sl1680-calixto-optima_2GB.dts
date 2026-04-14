@@ -97,7 +97,10 @@
 
 &phy0 {
 	reg = <3>;
+	micrel,rxc-skew-ps = <8>;
+    	micrel,txc-skew-ps = <8>;
 };
+
 
 &gmac0 {
 	status = "okay";
@@ -106,6 +109,7 @@
 	phy-handle = <&phy0>;
 	phy = <&phy0>;
 };
+
 
 &sdhci0 {
 	status = "okay";

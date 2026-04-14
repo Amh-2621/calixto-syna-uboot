@@ -64,11 +64,6 @@
                 groups = "SDIO_CDn";
                 function = "sdio";
         };
-
-        sdio_vmmc_pmux: sdio_vmmc_pmux{
-                groups = "SDIO_WP";
-                function = "gpio";
-        };
 };
 
 &CPU_SLEEP_0 {
