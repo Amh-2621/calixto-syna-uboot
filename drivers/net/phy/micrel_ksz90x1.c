@@ -410,6 +410,8 @@ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
 	u16 rxcdll_val, txcdll_val, val;
 	int ret;
 
+	printf("ETH: KSZ9131: Applying RGMII delays (mode: %d)...\n", phydev->interface);
+
 	switch (phydev->interface) {
 	case PHY_INTERFACE_MODE_RGMII:
 		rxcdll_val = KSZ9131RN_DLL_DISABLE_DELAY;
@@ -454,6 +456,8 @@ static int ksz9131_config_rgmii_delay(struct phy_device *phydev)
 static int ksz9131_config(struct phy_device *phydev)
 {
 	int ret;
+
+	printf("ETH: Micrel KSZ9131 driver 'config' function called.\n");
 
 	if (phy_interface_is_rgmii(phydev)) {
 		ret = ksz9131_config_rgmii_delay(phydev);
@@ -513,8 +517,10 @@ int ksz9xx1_phy_get_id(struct phy_device *phydev)
 
 int phy_micrel_ksz90x1_init(void)
 {
-	phy_register(&ksz9021_driver);
-	phy_register(&ksz9031_driver);
+
+	printf("ETH: Registering Micrel PHY drivers...\n");
 	phy_register(&ksz9131_driver);
+	phy_register(&ksz9031_driver);
+	phy_register(&ksz9021_driver);
 	return 0;
 }
