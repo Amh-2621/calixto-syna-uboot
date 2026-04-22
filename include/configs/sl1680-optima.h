@@ -88,5 +88,22 @@
 	"rescue_boot=echo \"*** RESCUE MODE TRIGGERED ***\"; "\
 		     "run rescue_load; run rescue_setup; run rescue_exec\0"
 #else
-#define CONFIG_EXTRA_ENV_SETTINGS "upgrade_available=0\0" "altbootcmd=if test ${boot_slot}  = 1; then bootslot set b; bootcount reset;bootcount reset; run bootcmd; else bootslot set a; bootcount reset; bootcount reset; run bootcmd;  fi"
+#define CONFIG_EXTRA_ENV_SETTINGS \
+	"upgrade_available=0\0" \
+	"kernel_addr_r=0x07c00000\0" \
+	"fdt_addr_r=0x09000000\0" \
+	"boot_file=Image\0" \
+	"fdt_file=sl1680-calixto-optima_2GB.dtb\0" \
+	"console=ttyS0,115200\0" \
+	"mmcdev=1\0" \
+	"rootfs_part=7\0" \
+	"load_kernel=ext4load mmc ${mmcdev}:${rootfs_part} ${kernel_addr_r} /boot/${boot_file}\0" \
+	"load_fdt=ext4load mmc ${mmcdev}:${rootfs_part} ${fdt_addr_r} /boot/${fdt_file}\0" \
+	"sd_boot=" \
+		"if run load_kernel && run load_fdt; then " \
+			/* We set the base args; fdt_update.c will append the rest */ \
+			"setenv bootargs console=${console} rootwait rw; " \
+			"booti ${kernel_addr_r} - ${fdt_addr_r}; " \
+		"fi\0" \
+	"bootcmd=run sd_boot\0"
 #endif
