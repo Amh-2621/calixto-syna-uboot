@@ -1,26 +1,26 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 or
- * later as published by the Free Software Foundation.
- *
- * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
- * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
- * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
- * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
- * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
- * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
- * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
- * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
- * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
- * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
- * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
- * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
- * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
- */
+ * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or
+ * later as published by the Free Software Foundation.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
+ * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
+ * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
+ * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
+ * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
+ * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
+ * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
+ * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
+ */
 
 #include <common.h>
 #include <command.h>
@@ -51,6 +51,14 @@
 #define SYNA_SPI_RANGE 0x1000000
 
 #define DEFAULT_SPI_ADDR 0x200000
+
+/* boot_rootfs: boot from rootfs_a ext4 partition (mmc 1, partition 7) */
+#define ROOTFS_MMC_DEV		1
+#define ROOTFS_MMC_PART		7
+#define ROOTFS_KERNEL_PATH	"/boot/Image-5.15.140"
+#define ROOTFS_DTB_PATH		"/boot/sl1680-calixto-optima_2GB.dtb"
+#define ROOTFS_KERNEL_ADDR	0x10000000
+#define ROOTFS_DTB_ADDR		0x17c00000
 
 enum boot_type_t {
 	BOOT_TYPE_MMC,
@@ -331,6 +339,75 @@ static int do_bootram(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 	return run_command(cmd, 0);
 }
 
+/*
+ * do_boot_rootfs - Boot Linux directly from rootfs_a ext4 partition.
+ *
+ * Loads a plain kernel Image and DTB from the /boot/ directory of the
+ * rootfs_a partition (mmc 1:7) and boots via booti.
+ *
+ * Note: ext4load cannot follow symlinks. ROOTFS_KERNEL_PATH must point
+ * to the actual kernel file, not the 'Image' symlink.
+ */
+static int do_boot_rootfs(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
+{
+	char cmd[128];
+	int ret;
+
+	/* Make sure the correct mmc device is selected */
+	ret = run_command("mmc dev " __stringify(ROOTFS_MMC_DEV), 0);
+	if (ret) {
+		printf("ERROR: Failed to select mmc dev %d!\n", ROOTFS_MMC_DEV);
+		return CMD_RET_FAILURE;
+	}
+
+	/* Load kernel Image */
+	printf("==> Loading kernel: mmc %d:%d %s -> 0x%08x\n",
+	       ROOTFS_MMC_DEV, ROOTFS_MMC_PART,
+	       ROOTFS_KERNEL_PATH, ROOTFS_KERNEL_ADDR);
+
+	snprintf(cmd, sizeof(cmd), "ext4load mmc %d:%d 0x%x %s",
+		 ROOTFS_MMC_DEV, ROOTFS_MMC_PART,
+		 ROOTFS_KERNEL_ADDR, ROOTFS_KERNEL_PATH);
+	ret = run_command(cmd, 0);
+	if (ret) {
+		printf("ERROR: Failed to load kernel from rootfs!\n");
+		return CMD_RET_FAILURE;
+	}
+
+	/* Load DTB */
+	printf("==> Loading DTB: mmc %d:%d %s -> 0x%08x\n",
+	       ROOTFS_MMC_DEV, ROOTFS_MMC_PART,
+	       ROOTFS_DTB_PATH, ROOTFS_DTB_ADDR);
+
+	snprintf(cmd, sizeof(cmd), "ext4load mmc %d:%d 0x%x %s",
+		 ROOTFS_MMC_DEV, ROOTFS_MMC_PART,
+		 ROOTFS_DTB_ADDR, ROOTFS_DTB_PATH);
+	ret = run_command(cmd, 0);
+	if (ret) {
+		printf("ERROR: Failed to load DTB from rootfs!\n");
+		return CMD_RET_FAILURE;
+	}
+
+	/* Set bootargs */
+	printf("==> Setting bootargs\n");
+	ret = run_command("setenv bootargs earlycon console=ttyS0,115200 "
+			  "root=/dev/mmcblk1p7 rootfstype=ext4 rootwait rw", 0);
+	if (ret) {
+		printf("ERROR: Failed to set bootargs!\n");
+		return CMD_RET_FAILURE;
+	}
+
+	/* Boot */
+	printf("==> Booting kernel...\n");
+	snprintf(cmd, sizeof(cmd), "booti 0x%x - 0x%x",
+		 ROOTFS_KERNEL_ADDR, ROOTFS_DTB_ADDR);
+	run_command(cmd, 0);
+
+	/* Should never reach here if boot succeeded */
+	printf("ERROR: booti returned — boot failed!\n");
+	return CMD_RET_FAILURE;
+}
+
 #ifdef CONFIG_CMD_SYNA_BOOTMMC
 U_BOOT_CMD(
 	bootmmc, 1, 0, do_bootmmc,
@@ -360,3 +437,10 @@ U_BOOT_CMD(
 	"syna_boot spi/ram offset\n"
 );
 
+U_BOOT_CMD(
+	boot_rootfs, 1, 0, do_boot_rootfs,
+	"Boot Linux from rootfs_a ext4 partition\n",
+	"Loads kernel and DTB from /boot/ on mmc 1:7 (rootfs_a) and boots via booti.\n"
+	"Kernel: " ROOTFS_KERNEL_PATH "\n"
+	"DTB:    " ROOTFS_DTB_PATH "\n"
+);
