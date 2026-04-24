@@ -90,6 +90,20 @@
 #else
 #define CONFIG_EXTRA_ENV_SETTINGS \
     "upgrade_available=0\0" \
-    "bootcmd=boot_rootfs\0" \
+    "rootfs_mmc_dev=1\0" \
+    "rootfs_mmc_part=7\0" \
+    "kernel_addr=0x10000000\0" \
+    "fdt_addr=0x17c00000\0" \
+    "initramfs_addr=0x8c00000\0" \
+    "kernel_file=/boot/Image-5.15.140\0" \
+    "fdt_file=/boot/sl1680-calixto-optima_2GB.dtb\0" \
+    "initramfs_file=/boot/initramfs.cpio.gz\0" \
+    "rootfs_load=ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${kernel_addr} ${kernel_file}; " \
+                "ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${fdt_addr} ${fdt_file}; " \
+                "ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${initramfs_addr} ${initramfs_file}\0" \
+    "rootfs_args=setenv bootargs console=ttyS0,115200 rootwait rw " \
+                "root=/dev/mmcblk1p7 rootfstype=ext4\0" \
+    "rootfs_exec=booti ${kernel_addr} ${initramfs_addr}:${filesize} ${fdt_addr}\0" \
+    "bootcmd=run rootfs_load; run rootfs_args; run rootfs_exec\0" \
     "altbootcmd=if test ${boot_slot} = 1; then bootslot set b; bootcount reset; bootcount reset; run bootcmd; else bootslot set a; bootcount reset; bootcount reset; run bootcmd; fi\0"
 #endif
