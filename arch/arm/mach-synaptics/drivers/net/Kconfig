@@ -1,0 +1,5 @@
+config PHY_SUNPLUS
+	bool  "SUNPLUS Ethernet PHY support"
+
+config ETH_ROM_MAC
+	bool  "Get MAC address from chip info"

@@ -1,2 +1,2 @@
-# calixto-syna-uboot
-Uboot source for calixto
+# calixto-sl-uboot
+U-boot for Synaptics SL series processors

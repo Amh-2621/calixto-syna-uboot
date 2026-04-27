@@ -1,0 +1,9 @@
+if TARGET_DOLPHIN
+
+config SYS_BOARD
+	default "dolphin"
+
+config SYS_CONFIG_NAME
+	default "dolphin"
+
+endif

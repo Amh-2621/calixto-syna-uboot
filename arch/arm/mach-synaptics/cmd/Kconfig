@@ -1,0 +1,26 @@
+menu "Synaptics specific command line interface"
+
+config CMD_SYNA_BOOTMMC
+	bool "Enable boot Linux from eMMC/SD"
+	depends on SYNA_MMC_SUBOOT
+
+config CMD_SYNA_BOOTSPI
+	bool "Enable boot Linux from SPI NOR"
+	depends on SYNA_SPI_SUBOOT
+
+config CMD_SYNA_FDT_UPDATE
+	bool "Enable FDT update before booting Kernel"
+	depends on SYNA_SUBOOT
+
+config CMD_SYNA_USBLOAD
+	bool "Enable loading image from USB slave"
+	depends on (SYNA_USB_UBOOT || SYNA_SUBOOT)
+
+config CMD_SYNA_OTP
+	bool "Enable OTP operations"
+	depends on SYNA_SUBOOT
+
+config CMD_SYNA_MTDPARTS
+	bool "Enable MTD parts in version table format"
+	depends on SYNA_SPI_SUBOOT
+endmenu

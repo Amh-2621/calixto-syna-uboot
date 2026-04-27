@@ -1,0 +1,3 @@
+config SYNA_CLK_GATE
+	bool "Synaptics SoC clock gate driver"
+	default y

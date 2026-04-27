@@ -1,0 +1,181 @@
+// SPDX-License-Identifier: GPL-2.0+
+/*
+ * Copyright (C) 2016~2023 Synaptics Incorporated. All rights reserved.
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 or
+ * later as published by the Free Software Foundation.
+ *
+ * INFORMATION CONTAINED IN THIS DOCUMENT IS PROVIDED "AS-IS," AND
+ * SYNAPTICS EXPRESSLY DISCLAIMS ALL EXPRESS AND IMPLIED WARRANTIES,
+ * INCLUDING ANY IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE, AND ANY WARRANTIES OF NON-INFRINGEMENT OF ANY
+ * INTELLECTUAL PROPERTY RIGHTS. IN NO EVENT SHALL SYNAPTICS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, PUNITIVE, OR
+ * CONSEQUENTIAL DAMAGES ARISING OUT OF OR IN CONNECTION WITH THE USE
+ * OF THE INFORMATION CONTAINED IN THIS DOCUMENT, HOWEVER CAUSED AND
+ * BASED ON ANY THEORY OF LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * NEGLIGENCE OR OTHER TORTIOUS ACTION, AND EVEN IF SYNAPTICS WAS
+ * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. IF A TRIBUNAL OF
+ * COMPETENT JURISDICTION DOES NOT PERMIT THE DISCLAIMER OF DIRECT
+ * DAMAGES OR ANY OTHER DAMAGES, SYNAPTICS' TOTAL CUMULATIVE LIABILITY
+ * TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
+ */
+
+/dts-v1/;
+
+#include "myna2.dtsi"
+#include "include/dt-bindings/gpio/gpio.h"
+
+/ {
+	model = "Synaptics Myna2 RDK USB U-Boot";
+	compatible = "Synaptics,myna2", "Synaptics,asserial";
+
+	memory {
+		device_type = "memory";
+		reg = <0 0 0 0x80000000>;
+	};
+
+	chosen {
+		stdout-path = &usbc0;
+	};
+
+	regulators {
+		compatible = "simple-bus";
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		sdio_vmmc: sdio_vmmc {
+			compatible = "regulator-fixed";
+			regulator-min-microvolt = <3300000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "vmmc_sdio";
+			enable-active-high;
+			gpio = <&expander1 4 GPIO_ACTIVE_HIGH>;
+		};
+
+		sdio_vqmmc: sdio_vqmmc {
+			compatible = "regulator-gpio";
+			pinctrl-names = "default";
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-name = "vqmmc_sdio";
+			regulator-type = "voltage";
+			states = <1800000 0x0 3300000 0x1>;
+			gpios = <&expander1 6 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&pinctrl {
+	emmc_pmux: emmc-pmux {
+		groups = "EMMC_RSTn", "EMMC_DATA0", "EMMC_DATA1", "EMMC_DATA2", "EMMC_DATA3", "EMMC_DATA4", "EMMC_DATA5", "EMMC_DATA6", "EMMC_DATA7", "EMMC_CLK", "EMMC_CMD";
+		function = "emmc";
+	};
+
+	sdio_pmux: sdio_pmux {
+		groups = "SDIO_CDn";
+		function = "sdio";
+	};
+
+	rgmii_pmux: rgmii-pmux {
+		groups = "GPIO_A0", "GPIO_A1", "RGMIITXC", "RGMIITD0", "RGMIITD1", "RGMIITD2", "RGMIITD3", "RGMIITXCTL", "RGMIIRXC", "RGMIIRD0", "RGMIIRD1", "RGMIIRD2", "RGMIIRD3", "RGMIIRXCTL", "RGMII_CLK_OUT";
+		function = "rgmii";
+	};
+
+	i2c1_pmux: i2c1-pmux {
+		groups = "TW1_SCL", "TW1_SDA";
+		function = "tw1";
+		drive-strength = <7>;
+	};
+};
+
+&i2c1 {
+	status = "okay";
+	pinctrl-0 = <&i2c1_pmux>;
+	pinctrl-names = "default";
+	clock-frequency = <100000>;
+	i2c-sda-hold-time-ns = <449>;
+	i2c-scl-rising-time-ns = <120>;
+	i2c-scl-falling-time-ns = <20>;
+
+	expander0: gpio@43 {
+		compatible = "fcs,fxl6408";
+		reg = <0x43>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+	expander1: gpio@44 {
+		compatible = "fcs,fxl6408";
+		reg = <0x44>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+};
+
+&phy0 {
+	reg = <0>;
+};
+
+&gmac0 {
+	status = "okay";
+	max-speed = <1000>;
+	phy-mode = "rgmii-id";
+	phy-handle = <&phy0>;
+	phy = <&phy0>;
+	pinctrl-names = "default";
+	pinctrl-0 = <&rgmii_pmux>;
+	snps,reset-gpio = <&expander0 3 GPIO_ACTIVE_HIGH>;
+	snps,reset-active-high;
+	snps,reset-delays-us = <0 10000 50000>;
+};
+
+&CPU_SLEEP_0 {
+	status = "disabled";
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&sdhci0 {
+	status = "okay";
+	mmc-ddr-1_8v;
+	mmc-hs200-1_8v;
+	mmc-hs400-1_8v;
+	fixed-voltage;
+};
+
+&sdhci1 {
+	status="okay";
+	pinctrl-0 = <&sdio_pmux>;
+	pinctrl-names = "default";
+	sdhci-sdio;
+	cap-sd-highspeed;
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	fixed-voltage;
+	vmmc-supply = <&sdio_vmmc>;
+	vqmmc-supply = <&sdio_vqmmc>;
+};
+
+&spi0 {
+	status = "okay";
+	max-write-size = <128>;
+	clock-frequency = <100000000>;
+	spi-flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		memory-map = <0x0 0xf0000000 0x0 0x4000000>;
+		spi-max-frequency = <10000000>;
+	};
+};
+
+&usbc0 {
+	status = "okay";
+};

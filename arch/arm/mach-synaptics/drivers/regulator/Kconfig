@@ -1,0 +1,5 @@
+config REGULATOR_RASPBERRYPI_TOUCHSCREEN_ATTINY
+	bool "Enable regulator on waveshare raspberry pi touchscreen"
+	depends on VIDEO_SYNA
+	help
+	  This enables regulator on waveshare raspberry pi touchscreen.

@@ -1,0 +1,3 @@
+config SYNA_RESET
+        bool "Reset controller driver for Synaptcis SoCs"
+        depends on DM_RESET && ARCH_SYNAPTICS
