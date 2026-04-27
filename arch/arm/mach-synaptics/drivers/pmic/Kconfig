@@ -12,3 +12,8 @@ config SYNA_DOLPHIN_PMIC
 	bool "Synaptics Dolphin SoC pmic driver"
 	depends on SYNA_SUBOOT && TARGET_DOLPHIN
 	default y
+
+config SYNA_SL1680_OPTIMA_PMIC
+	bool "Synaptics Dolphin SoC pmic driver"
+	depends on SYNA_SUBOOT && TARGET_SL1680_OPTIMA
+	default y

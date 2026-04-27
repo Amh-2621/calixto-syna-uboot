@@ -34,7 +34,7 @@ PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/bridge/
 
 PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/panel/$(CONFIG_PANEL_CFG)/
 
-ifneq ($(filter y, $(CONFIG_TARGET_DOLPHIN) $(CONFIG_TARGET_PLATYPUS)), )
+ifneq ($(filter y, $(CONFIG_TARGET_DOLPHIN) $(CONFIG_TARGET_PLATYPUS) $(CONFIG_TARGET_SL1680_OPTIMA)), )
     PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vsxxx
     PLATFORM_CPPFLAGS += -DLOGO_SRC_FMT=0
     PLATFORM_CPPFLAGS += -DCONFIG_OPTEE -DCONFIG_GENX_ENABLE
@@ -50,6 +50,12 @@ ifneq ($(filter y, $(CONFIG_TARGET_DOLPHIN) $(CONFIG_TARGET_PLATYPUS)), )
 endif
 
 ifdef CONFIG_TARGET_DOLPHIN
+    PLATFORM_CPPFLAGS += -I$(srctree)/../common/inc/chip/dolphin/A0
+    PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vpp_ca/avpll/dolphin/
+    obj-y += vpp_ca/avpll/dolphin/diag_pll.o
+endif
+
+ifdef CONFIG_TARGET_SL1680_OPTIMA
     PLATFORM_CPPFLAGS += -I$(srctree)/../common/inc/chip/dolphin/A0
     PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vpp_ca/avpll/dolphin/
     obj-y += vpp_ca/avpll/dolphin/diag_pll.o
