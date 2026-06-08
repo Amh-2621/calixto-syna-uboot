@@ -22,8 +22,4 @@
 # TO ANY PARTY SHALL NOT EXCEED ONE HUNDRED U.S. DOLLARS.
 #
 
-obj-$(CONFIG_SYNA_MYNA2_PMIC) += myna2_pmic.o
-obj-$(CONFIG_SYNA_PLATYPUS_PMIC) += platypus_pmic.o
-obj-$(CONFIG_SYNA_DOLPHIN_PMIC) += dolphin_pmic.o
-obj-$(CONFIG_SYNA_SL1680_OPTIMA_PMIC) += sl1680-optima_pmic.o
-obj-$(CONFIG_SYNA_SL1640_OPTIMA_PMIC) += sl1640-optima_pmic.o
+obj-y += sl1640-optima_boardinit.o

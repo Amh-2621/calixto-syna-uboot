@@ -5,6 +5,7 @@ config SYS_SOC
 
 config SYS_VENDOR
 	default "calixto" if TARGET_SL1680_OPTIMA
+	default "calixto" if TARGET_SL1640_OPTIMA
 	default "synaptics"
 
 choice
@@ -37,6 +38,13 @@ config TARGET_SL1680_OPTIMA
 	help
 	  The Synaptics SL1680-OPTIMA is a ARM64-based SoC with a quad-core Cortex-A73.
 	  including UART, SPI, USB2.0 and OTG, NAND, EMMC, USB Ethernet, etc.
+
+config TARGET_SL1640_OPTIMA
+	bool "Synaptics SL1640-OPTIMA SoC"
+	select ARM64
+	help
+	  The Synaptics SL1640-OPTIMA is a ARM64-based SoC with a quad-core Cortex-A55.
+	  including UART, SPI, USB2.0 and OTG, EMMC, etc.
 endchoice
 
 source "arch/arm/mach-synaptics/drivers/Kconfig"
@@ -46,6 +54,7 @@ source "board/synaptics/myna2/Kconfig"
 source "board/synaptics/platypus/Kconfig"
 source "board/synaptics/dolphin/Kconfig"
 source "board/calixto/sl1680-optima/Kconfig"
+source "board/calixto/sl1640-optima/Kconfig"
 
 menu "Synaptics Specific Setup"
 

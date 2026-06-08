@@ -34,7 +34,7 @@ PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/bridge/
 
 PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/panel/$(CONFIG_PANEL_CFG)/
 
-ifneq ($(filter y, $(CONFIG_TARGET_DOLPHIN) $(CONFIG_TARGET_PLATYPUS) $(CONFIG_TARGET_SL1680_OPTIMA)), )
+ifneq ($(filter y, $(CONFIG_TARGET_DOLPHIN) $(CONFIG_TARGET_PLATYPUS) $(CONFIG_TARGET_SL1680_OPTIMA) $(CONFIG_TARGET_SL1640_OPTIMA)), )
     PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vsxxx
     PLATFORM_CPPFLAGS += -DLOGO_SRC_FMT=0
     PLATFORM_CPPFLAGS += -DCONFIG_OPTEE -DCONFIG_GENX_ENABLE
@@ -62,6 +62,12 @@ ifdef CONFIG_TARGET_SL1680_OPTIMA
 endif
 
 ifdef CONFIG_TARGET_PLATYPUS
+    PLATFORM_CPPFLAGS += -I$(srctree)/../common/inc/chip/platypus/A0
+    PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vpp_ca/avpll/platypus/
+    obj-y += vpp_ca/avpll/platypus/diag_pll.o
+endif
+
+ifdef CONFIG_TARGET_SL1640_OPTIMA
     PLATFORM_CPPFLAGS += -I$(srctree)/../common/inc/chip/platypus/A0
     PLATFORM_CPPFLAGS += -I$(srctree)/arch/arm/mach-synaptics/drivers/video/vpp_ca/avpll/platypus/
     obj-y += vpp_ca/avpll/platypus/diag_pll.o

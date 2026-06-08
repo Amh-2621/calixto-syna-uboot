@@ -817,6 +817,9 @@ dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot_2GB.dtb
 dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima_4GB.dtb
 dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb_4GB.dtb
 dtb-$(CONFIG_TARGET_SL1680_OPTIMA) += sl1680-calixto-optima-usb-suboot_4GB.dtb
+dtb-$(CONFIG_TARGET_SL1640_OPTIMA) += sl1640-calixto-optima_2GB.dtb
+dtb-$(CONFIG_TARGET_SL1640_OPTIMA) += sl1640-calixto-optima-usb_2GB.dtb
+dtb-$(CONFIG_TARGET_SL1640_OPTIMA) += sl1640-calixto-optima-usb-suboot_2GB.dtb
 
 targets += $(dtb-y)
 

@@ -1,0 +1,9 @@
+if TARGET_SL1640_OPTIMA
+
+config SYS_BOARD
+	default "sl1640-optima"
+
+config SYS_CONFIG_NAME
+	default "sl1640-optima"
+
+endif

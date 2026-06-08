@@ -224,6 +224,25 @@ u8 phy_delay[MMC_MODES_END] = {
 };
 #endif
 
+#ifdef CONFIG_TARGET_SL1640_OPTIMA
+u8 phy_delay[MMC_MODES_END] = {
+	40,  /* MMC_LEGACY */
+	127, /* SD_LEGACY */
+	40,  /* MMC_HS */
+	35,  /* SD_HS */
+	40,  /* MMC_HS_52 */
+	40,  /* MMC_DDR_52 */
+	100, /* UHS_SDR12 */
+	100, /* UHS_SDR25 */
+	100, /* UHS_SDR50 */
+	43,  /* UHS_DDR50 */
+	43,  /* UHS_SDR104 */
+	40,  /* MMC_HS_200 */
+	20,  /* MMC_HS_400 */
+	0,   /* MMC_HS_400_ES */
+};
+#endif
+
 #ifdef CONFIG_TARGET_DOLPHIN
 u8 phy_delay[MMC_MODES_END] = {
 	40,  /* MMC_LEGACY */
