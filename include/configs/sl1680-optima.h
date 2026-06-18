@@ -88,36 +88,5 @@
 	"rescue_boot=echo \"*** RESCUE MODE TRIGGERED ***\"; "\
 		     "run rescue_load; run rescue_setup; run rescue_exec\0"
 #else
-#define CONFIG_EXTRA_ENV_SETTINGS \
-	"upgrade_available=0\0" \
-	"rootfs_mmc_dev=1\0" \
-	"rootfs_mmc_part=7\0" \
-	"kernel_addr=0x10000000\0" \
-	"fdt_addr=0x17c00000\0" \
-	"initramfs_addr=0x8c00000\0" \
-	"kernel_file=/boot/Image-5.15.140\0" \
-	"fdt_file=/boot/sl1680-calixto-optima.dtb\0" \
-	"initramfs_file=/boot/initramfs.cpio.gz\0" \
-	\
-	/* Custom SD Card Boot Flow */ \
-	"sd_load=ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${kernel_addr} ${kernel_file}; " \
-			"ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${fdt_addr} ${fdt_file}; " \
-			"ext4load mmc ${rootfs_mmc_dev}:${rootfs_mmc_part} ${initramfs_addr} ${initramfs_file}; " \
-			"setenv initramfs_size ${filesize}\0" \
-	"sd_args=setenv bootargs console=ttyS0,115200 rootwait rw\0" \
-	"sd_exec=booti ${kernel_addr} ${initramfs_addr}:${initramfs_size} ${fdt_addr}\0" \
-	"sd_boot=run sd_load; run sd_args; run sd_exec\0" \
-	\
-	/* Main Boot Command - Runs AFTER the countdown delay */ \
-	"bootcmd=mmc rescan; " \
-			"if mmc dev ${rootfs_mmc_dev}; then " \
-				"echo '--- SD Card detected! Launching custom boot... ---'; " \
-				"run sd_boot; " \
-			"else " \
-				"echo '--- No SD Card. Proceeding to eMMC boot... ---'; " \
-				"run altbootcmd; " \
-			"fi\0" \
-	\
-	/* Factory default altbootcmd preserved exactly */ \
-	"altbootcmd=if test ${boot_slot}  = 1; then bootslot set b; bootcount reset;bootcount reset; run bootcmd; else bootslot set a; bootcount reset; bootcount reset; run bootcmd;  fi\0"
+#define CONFIG_EXTRA_ENV_SETTINGS "upgrade_available=0\0" "altbootcmd=if test ${boot_slot}  = 1; then bootslot set b; bootcount reset;bootcount reset; run bootcmd; else bootslot set a; bootcount reset; bootcount reset; run bootcmd;  fi"
 #endif
