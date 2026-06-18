@@ -28,7 +28,7 @@
 #include "include/dt-bindings/gpio/gpio.h"
 
 / {
-	model = "Calixto SL1680 OPTIMA 2GB";
+	model = "Calixto SL1680 OPTIMA 1GB";
 	compatible = "Synaptics,dolphin", "Synaptics,asserial";
 
 	memory {
